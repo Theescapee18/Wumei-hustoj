@@ -18,12 +18,17 @@ updates:
         dependency-type: development
         update-types: [minor, patch]
     ignore:
-      # Next.js / React 大版本升级影响面大，人工评估后再动
+      # 框架与工具链的大版本升级影响面大，人工评估后再动
       - dependency-name: next
         update-types: [version-update:semver-major]
       - dependency-name: react
         update-types: [version-update:semver-major]
       - dependency-name: react-dom
+        update-types: [version-update:semver-major]
+      # TypeScript 7 是原生重写版，编译行为与插件生态差异大
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
+      - dependency-name: eslint
         update-types: [version-update:semver-major]
 
   # GitHub Actions 版本更新
