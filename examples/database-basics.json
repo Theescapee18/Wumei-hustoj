@@ -1,0 +1,25 @@
+[
+  {
+    "title": "MySQL索引优化策略",
+    "category": "database",
+    "subcategory": "mysql",
+    "question_type": "short",
+    "difficulty": 4,
+    "content": {
+      "question": "请简述MySQL中索引优化的主要策略有哪些？",
+      "keywords": [
+        "选择合适的索引类型",
+        "避免过度索引",
+        "使用复合索引",
+        "索引列选择",
+        "定期维护"
+      ],
+      "min_length": 100,
+      "max_length": 500,
+      "reference_answer": "MySQL索引优化策略包括：1. 选择合适索引类型（B+树、哈希等）；2. 避免过度索引影响写入性能；3. 合理使用复合索引遵循最左前缀原则；4. 索引列选择高选择性字段；5. 定期维护索引，删除冗余索引，重建碎片化索引。",
+      "auto_check": false
+    },
+    "explanation": "索引优化是数据库性能调优的关键，需要平衡查询性能和写入性能，根据实际场景选择合适的索引策略。",
+    "knowledge_points": ["MySQL", "索引", "性能优化", "B+树", "复合索引"]
+  }
+]

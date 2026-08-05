@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Spring Bean的作用域",
+    "category": "framework",
+    "subcategory": "spring",
+    "question_type": "blank",
+    "difficulty": 2,
+    "content": {
+      "question": "Spring框架中，Bean的默认作用域是____，可以通过@Scope注解设置为____作用域。",
+      "blanks": [
+        {
+          "id": 1,
+          "answer": "singleton",
+          "acceptable": ["单例", "singleton"]
+        },
+        {
+          "id": 2,
+          "answer": "prototype",
+          "acceptable": ["原型", "prototype", "多例"]
+        }
+      ],
+      "case_sensitive": false
+    },
+    "explanation": "Spring Bean默认作用域是singleton（单例），整个应用中只有一个实例。prototype（原型）每次获取都创建新实例。",
+    "knowledge_points": ["Spring", "Bean", "作用域", "singleton", "prototype"]
+  }
+]

@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.gitignore
+.github
+*.log
+.env*
+!.env.example
+Dockerfile
+docker-compose.yml
+.dockerignore
+judge-data
+docs
+*.zip

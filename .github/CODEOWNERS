@@ -1,0 +1,21 @@
+# 代码所有者：PR 命中以下路径时自动请求对应人员 Review
+# 语法见 https://docs.github.com/articles/about-code-owners
+
+# 默认所有改动
+*                       @Theescapee18
+
+# 判题核心与安全相关，改动风险高
+/src/lib/judgeExecutor.ts   @Theescapee18
+/src/lib/judgeDaemon.ts     @Theescapee18
+/src/lib/auth.ts            @Theescapee18
+/src/lib/db.ts              @Theescapee18
+/src/proxy.ts               @Theescapee18
+
+# 数据库结构
+/database/                  @Theescapee18
+/migrations/                @Theescapee18
+
+# 部署与 CI
+/Dockerfile                 @Theescapee18
+/docker-compose.yml         @Theescapee18
+/.github/                   @Theescapee18

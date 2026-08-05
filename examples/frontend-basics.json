@@ -1,0 +1,29 @@
+[
+  {
+    "title": "React的useState是否异步",
+    "category": "frontend",
+    "subcategory": "react",
+    "question_type": "judge",
+    "difficulty": 3,
+    "content": {
+      "question": "React的useState hook更新状态是异步的。",
+      "answer": false,
+      "explanation_detail": "useState本身是同步的，但状态更新触发重新渲染是异步的。React会批量处理状态更新以提高性能。"
+    },
+    "explanation": "useState是同步函数，但React的渲染机制使状态更新看起来像异步。实际上React18之前是异步批处理，React18默认同步但可以异步。",
+    "knowledge_points": ["React", "Hooks", "useState", "状态管理"]
+  },
+  {
+    "title": "Vue的双向数据绑定",
+    "category": "frontend",
+    "subcategory": "vue",
+    "question_type": "judge",
+    "difficulty": 2,
+    "content": {
+      "question": "Vue2使用Object.defineProperty实现双向绑定，Vue3使用Proxy实现。",
+      "answer": true
+    },
+    "explanation": "Vue2使用Object.defineProperty劫持数据属性，Vue3使用Proxy实现响应式，Proxy性能更好且能监听更多操作。",
+    "knowledge_points": ["Vue", "双向绑定", "Proxy", "响应式"]
+  }
+]

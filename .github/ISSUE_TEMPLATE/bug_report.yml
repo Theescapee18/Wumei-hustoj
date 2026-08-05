@@ -1,0 +1,76 @@
+name: 缺陷报告
+description: 报告系统故障或行为异常
+title: "fix: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 问题描述
+      description: 简明说清哪里不对
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现步骤
+      description: 从登录开始，一步步写到问题出现
+      placeholder: |
+        1. 用 admin 登录
+        2. 进入 管理端 → 考试管理 → 导入试卷
+        3. 粘贴 JSON 后点击导入
+        4. 页面报错
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期表现
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际表现
+      description: 有报错信息、控制台日志、判题结果码请一并贴出（去掉真实密码等敏感信息）
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 涉及模块
+      options:
+        - 判题（judge）
+        - 考试（exam）
+        - 题目管理（problem）
+        - 用户与权限（user/auth）
+        - 竞赛与排名（contest）
+        - 管理端（admin）
+        - 界面样式（ui）
+        - 部署与数据库（docker/db）
+        - 不确定
+    validations:
+      required: true
+
+  - type: input
+    id: env
+    attributes:
+      label: 运行环境
+      description: 部署方式、浏览器、涉及的语言编码等
+      placeholder: Docker 部署 / Chrome 130 / 提交语言 JavaScript(16)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 已搜索过现有 Issue，确认不是重复问题
+          required: true
+        - label: 贴出的日志与截图已去除真实密码、密钥等敏感信息
+          required: true

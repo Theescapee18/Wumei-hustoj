@@ -1,0 +1,63 @@
+# 低配服务器（2核2G，约50人）单机部署
+# 用法：
+#   1. 修改下方 DB_PASS / JWT_SECRET（或在同目录 .env 中定义）
+#   2. docker compose up -d --build
+#   3. 浏览器访问 http://服务器IP  （默认管理员 admin/admin，登录后请改密码）
+# 题目测试数据放入 judgedata 卷（/app/judge-data/<题目ID>/*.in|*.out），
+# 通过管理端"题目导入"上传时会自动写入。
+
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: jol
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASS:-Nextoj@2026}
+    # 低内存调优：50 人规模足够
+    command: postgres -c shared_buffers=128MB -c max_connections=50 -c effective_cache_size=256MB
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # 首次启动自动建表（按文件名顺序执行）
+      - ./database/postgresql_init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+      - ./database/judge_queue_init.sql:/docker-entrypoint-initdb.d/02_judge_queue.sql:ro
+      - ./database/knowledge_problem_init.sql:/docker-entrypoint-initdb.d/03_knowledge.sql:ro
+      - ./database/class_club_init.sql:/docker-entrypoint-initdb.d/04_class_club.sql:ro
+      - ./database/performance_indexes.sql:/docker-entrypoint-initdb.d/05_indexes.sql:ro
+      - ./migrations/exam_tables.sql:/docker-entrypoint-initdb.d/06_exams.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d jol"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    mem_limit: 384m
+
+  web:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_OJ_NAME: ${OJ_NAME:-社团OJ}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_TYPE: postgresql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASS: ${DB_PASS:-Nextoj@2026}
+      DB_NAME: jol
+      JWT_SECRET: ${JWT_SECRET:-please-change-this-secret}
+      OJ_DATA: /app/judge-data
+      # 限制 Next.js 进程堆内存，为判题子进程留出余量
+      NODE_OPTIONS: --max-old-space-size=640
+    volumes:
+      - judgedata:/app/judge-data
+    ports:
+      - "80:3000"
+    mem_limit: 1280m
+
+volumes:
+  pgdata:
+  judgedata:

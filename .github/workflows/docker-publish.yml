@@ -1,0 +1,74 @@
+name: Docker Publish
+
+# 推 main 或打 v* 版本 tag 时构建镜像并推送到 GitHub Container Registry
+on:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-and-push:
+    name: 构建并推送镜像
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: 登录 GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 自动生成镜像标签：main 分支 -> main + sha；v1.2.0 -> 1.2.0 / 1.2 / latest
+      - name: 生成镜像标签
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,format=short
+          labels: |
+            org.opencontainers.image.title=Wumei OJ
+            org.opencontainers.image.description=社团在线评测平台（Next.js + PostgreSQL）
+
+      - name: 构建并推送
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          # 目标是 2核2G 的 x86 服务器，只构建 amd64，避免多架构拖慢构建
+          platforms: linux/amd64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # 站点名称在构建时内联进前端，可在仓库 Variables 里配置 OJ_NAME 覆盖
+          build-args: |
+            NEXT_PUBLIC_OJ_NAME=${{ vars.OJ_NAME || '社团OJ' }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: 输出拉取命令
+        run: |
+          echo "### 镜像已发布" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.meta.outputs.tags }}" | while read -r t; do
+            echo "docker pull $t"
+          done >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY

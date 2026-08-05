@@ -1,0 +1,72 @@
+[
+  {
+    "title": "Java中String类的特点",
+    "category": "language",
+    "subcategory": "java",
+    "question_type": "choice",
+    "difficulty": 2,
+    "content": {
+      "question": "以下关于Java String类的描述，哪些是正确的？",
+      "type": "multiple",
+      "options": [
+        {
+          "id": "A",
+          "text": "String是不可变的",
+          "correct": true
+        },
+        {
+          "id": "B",
+          "text": "String可以被继承",
+          "correct": false
+        },
+        {
+          "id": "C",
+          "text": "String存储在堆内存中",
+          "correct": true
+        },
+        {
+          "id": "D",
+          "text": "String支持线程安全",
+          "correct": true
+        }
+      ]
+    },
+    "explanation": "String是不可变的，存储在堆内存，由于不可变特性天然支持线程安全，但不能被继承（final类）。",
+    "knowledge_points": ["Java", "String", "不可变性", "final类"]
+  },
+  {
+    "title": "Java集合框架选择",
+    "category": "language",
+    "subcategory": "java",
+    "question_type": "choice",
+    "difficulty": 3,
+    "content": {
+      "question": "以下哪个集合类最适合用于需要频繁插入删除操作的场景？",
+      "type": "single",
+      "options": [
+        {
+          "id": "A",
+          "text": "ArrayList",
+          "correct": false
+        },
+        {
+          "id": "B",
+          "text": "LinkedList",
+          "correct": true
+        },
+        {
+          "id": "C",
+          "text": "HashSet",
+          "correct": false
+        },
+        {
+          "id": "D",
+          "text": "TreeSet",
+          "correct": false
+        }
+      ]
+    },
+    "explanation": "LinkedList基于链表实现，插入删除操作效率高（O(1)），ArrayList基于数组，插入删除需要移动元素（O(n)）。",
+    "knowledge_points": ["Java", "集合", "LinkedList", "ArrayList"]
+  }
+]

@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 同一分支的新推送会取消仍在跑的旧任务，节省额度
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: 类型检查 / Lint / 构建
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: TypeScript 类型检查
+        run: npm run typecheck
+
+      - name: ESLint
+        # 存量 warning 已在 eslint.config.mjs 中登记为技术债，此处设上限防止债务增长。
+        # 这个数字只允许往下调，不允许往上加。
+        run: npm run lint -- --max-warnings 360
+
+      - name: 生产构建
+        run: npx next build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1
+
+  database:
+    name: 数据库脚本校验
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_DB: jol
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: ci_only_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v5
+
+      # 按 docker-compose 中的挂载顺序依次执行，任一语法/约束错误立即失败。
+      # 这一步能拦住"本地能跑、全新部署建表失败"这类问题。
+      - name: 依次应用建表与迁移脚本
+        env:
+          PGPASSWORD: ci_only_password
+        run: |
+          set -e
+          for f in \
+            database/postgresql_init.sql \
+            database/judge_queue_init.sql \
+            database/knowledge_problem_init.sql \
+            database/class_club_init.sql \
+            database/performance_indexes.sql \
+            migrations/exam_tables.sql
+          do
+            echo "==> applying $f"
+            psql -h localhost -U postgres -d jol -v ON_ERROR_STOP=1 -f "$f"
+          done
+
+      - name: 校验核心表与默认管理员已就绪
+        env:
+          PGPASSWORD: ci_only_password
+        run: |
+          set -e
+          psql -h localhost -U postgres -d jol -v ON_ERROR_STOP=1 -c "
+            SELECT 'users'      AS t, count(*) FROM users
+            UNION ALL SELECT 'problem',      count(*) FROM problem
+            UNION ALL SELECT 'solution',     count(*) FROM solution
+            UNION ALL SELECT 'judge_queue',  count(*) FROM judge_queue
+            UNION ALL SELECT 'exam_paper',   count(*) FROM exam_paper;"
+          # 默认管理员必须存在，且密码为 pwCheck 可识别的 32 位 md5 旧格式
+          psql -h localhost -U postgres -d jol -v ON_ERROR_STOP=1 -t -c "
+            SELECT CASE WHEN password ~ '^[0-9a-f]{32}\$' THEN 'ok' ELSE 'bad' END
+            FROM users WHERE user_id = 'admin';" | grep -q ok
