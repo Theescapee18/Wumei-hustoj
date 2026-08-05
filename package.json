@@ -35,6 +35,6 @@
     "@types/pg": "^8.11.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
-    "typescript": "^5"
+    "typescript": "^7"
   }
 }
