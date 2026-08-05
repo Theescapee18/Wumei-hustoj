@@ -1,11 +1,12 @@
 -- PostgreSQL数据库初始化脚本
--- 创建数据库和表结构，优化JSON字段支持
-
--- 创建数据库
-CREATE DATABASE jol;
-
--- 使用数据库
-\c jol;
+-- 创建表结构，优化JSON字段支持
+--
+-- 注意：本脚本只建表，不创建数据库。请先建好数据库再连上去执行：
+--   createdb -U postgres jol
+--   psql -U postgres -d jol -f database/postgresql_init.sql
+-- Docker 部署时数据库由 postgres 容器的 POSTGRES_DB 自动创建，
+-- 脚本作为 /docker-entrypoint-initdb.d/ 初始化项在该库内执行，
+-- 因此这里不能再写 CREATE DATABASE / \c，否则初始化会报错中断。
 
 -- 用户表
 CREATE TABLE users (

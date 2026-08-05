@@ -47,9 +47,11 @@ npm ci
 cp .env.example .env.local   # 按实际情况填写数据库连接与 JWT_SECRET
 ```
 
-初始化数据库（按顺序执行）：
+初始化数据库（先建库，再按顺序执行脚本）：
 
 ```bash
+createdb -U postgres jol
+
 psql -U postgres -d jol -f database/postgresql_init.sql
 psql -U postgres -d jol -f database/judge_queue_init.sql
 psql -U postgres -d jol -f database/knowledge_problem_init.sql
