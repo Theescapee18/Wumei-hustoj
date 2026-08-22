@@ -20,7 +20,7 @@ jobs:
     name: 类型检查 / Lint / 构建
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v5
         with:
@@ -61,7 +61,7 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # 按 docker-compose 中的挂载顺序依次执行，任一语法/约束错误立即失败。
       # 这一步能拦住"本地能跑、全新部署建表失败"这类问题。
