@@ -37,7 +37,7 @@ jobs:
       # 自动生成镜像标签：main 分支 -> main + sha；v1.2.0 -> 1.2.0 / 1.2 / latest
       - name: 生成镜像标签
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.REGISTRY }}/${{ github.repository }}
           tags: |
