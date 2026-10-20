@@ -18,7 +18,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^3.0.3",
     "bootstrap": "^5.3.8",
-    "concurrently": "^9.1.2",
+    "concurrently": "^9.2.5",
     "fast-xml-parser": "^5.9.3",
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.22.5",
